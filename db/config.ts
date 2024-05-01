@@ -2,7 +2,7 @@ import idleDirective from 'astro/runtime/client/idle.js';
 import { optional } from 'astro/zod';
 import { defineDb,defineTable, column, NOW } from 'astro:db';
 
-const landing = defineTable({
+const Landing = defineTable({
   columns: {
     idLanding: column.number({primaryKey: true}),
     imagenPrincipal: column.text(),
@@ -16,38 +16,46 @@ const landing = defineTable({
   }
 });
 
-const usuario = defineTable({
+const Usuario = defineTable({
    columns: {
-    idUsuario: column.number({primaryKey: true}),
+    id: column.text({primaryKey: true}),
     correo: column.text({optional:false}),
-    contrasena: column.text({optional: false}),
+    password: column.text({optional: false}),
+    username: column.text({unique: true,optional:false}),
     telefono: column.text({optional: false})
    }
-
 })
 
-const usuarioxinformacion = defineTable({
+const Sesion = defineTable({
+  columns: {
+    id: column.text({optional: false,unique:true}),
+    userId: column.text({optional:false,references: () => Usuario.columns.id}),
+    expiresAt: column.number({optional:false})
+  }
+})
+
+const Usuarioxinformacion = defineTable({
     columns: {
-      idUsuario: column.number({references: () => usuario.columns.idUsuario}),
-      idLanding: column.number({references: () => landing.columns.idLanding}),
+      idUsuario: column.text({references: () => Usuario.columns.id}),
+      idLanding: column.number({references: () => Landing.columns.idLanding}),
     }
 });
 
-const usuarioxservicio = defineTable({
+const Usuarioxservicio = defineTable({
   columns:{
-    idUsuario: column.number({references: () => usuario.columns.idUsuario}),
-    idServicio: column.number({references: () => servicios.columns.idServicio})
+    idUsuario: column.text({references: () => Usuario.columns.id}),
+    idServicio: column.number({references: () => Servicios.columns.idServicio})
   }
 })
 
-const usuarioxcliente = defineTable({
+const Usuarioxcliente = defineTable({
   columns: {
-    idUsuario: column.number({references: () => usuario.columns.idUsuario}),
-    idCliente: column.number({references: () => cliente.columns.idCliente})
+    idUsuario: column.text({references: () => Usuario.columns.id}),
+    idCliente: column.number({references: () => Cliente.columns.idCliente})
   }
 })
 
-const servicios = defineTable({
+const Servicios = defineTable({
   columns: {
     idServicio: column.number({primaryKey: true}),
     nombre: column.text({optional: false}),
@@ -56,7 +64,7 @@ const servicios = defineTable({
   }
 })
 
-const cliente = defineTable({
+const Cliente = defineTable({
   columns: {
     idCliente: column.number({primaryKey: true}),
     nombre: column.text({optional: false}),
@@ -68,21 +76,21 @@ const cliente = defineTable({
   }
 })
 
-const clientexautomovil = defineTable({
+const Clientexautomovil = defineTable({
   columns: {
-    idAutomovil: column.number({references: () => automovil.columns.idAutomovil}),
-    idCliente: column.number({references: () => cliente.columns.idCliente})
+    idAutomovil: column.number({references: () => Automovil.columns.idAutomovil}),
+    idCliente: column.number({references: () => Cliente.columns.idCliente})
   }
 })
 
-const clientextramite = defineTable({
+const Clientextramite = defineTable({
   columns: {
-    idTicket: column.number({references: () => ticketTramite.columns.idTicket}),
-    idCliente: column.number({references: () => cliente.columns.idCliente})
+    idTicket: column.number({references: () => TicketTramite.columns.idTicket}),
+    idCliente: column.number({references: () => Cliente.columns.idCliente})
   }
 })
 
-const automovil = defineTable({
+const Automovil = defineTable({
   columns: {
     idAutomovil: column.number({primaryKey: true}),
     numeroSerie: column.text({optional: false}),
@@ -92,7 +100,7 @@ const automovil = defineTable({
   }
 })
 
-const ticketTramite = defineTable({
+const TicketTramite = defineTable({
   columns: {
     idTicket: column.number({primaryKey: true}),
     fechaSolicitud: column.date({default: NOW}),
@@ -103,16 +111,17 @@ const ticketTramite = defineTable({
 })
 export default defineDb({
   tables: {
-    landing,
-    usuario,
-    usuarioxinformacion,
-    usuarioxservicio,
-    usuarioxcliente,
-    servicios,
-    cliente,
-    clientexautomovil,
-    clientextramite,
-    automovil,
-    ticketTramite
+    Landing,
+    Usuario,
+    Sesion,
+    Usuarioxinformacion,
+    Usuarioxservicio,
+    Usuarioxcliente,
+    Servicios,
+    Cliente,
+    Clientexautomovil,
+    Clientextramite,
+    Automovil,
+    TicketTramite
   }
 });
