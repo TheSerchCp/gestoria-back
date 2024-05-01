@@ -5,7 +5,7 @@ import { Usuario, db } from "astro:db";
 import { Lucia } from "lucia";
 import { lucia } from "@/auth";
 
-export async function POST(context:APIContext): Promise<Response>{
+export const POST = async(context:APIContext): Promise<Response> =>{
     //parse del formulario de datos
     const formData = await context.request.formData();
     const username = formData.get('correo');
